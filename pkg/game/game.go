@@ -18,34 +18,69 @@ type Position struct {
 type Game struct {
 	gridWidth, gridHeight int32
 
-	SnakeDirection int
-	Snake          []Position
+	snakeDirection int
+	nextDirection  int
+
+	IsGameOver bool
+	IsPaused   bool
+
+	Snake []Position
 
 	Food Position
 
-	Score int
+	Config *Config
 
-	IsGameOver bool
+	Score int
 }
 
-func (game *Game) ChangeSnakeDirection(direction int) {
-	if (direction == DirectionLeft && game.SnakeDirection != DirectionRight) ||
-		(direction == DirectionRight && game.SnakeDirection != DirectionLeft) ||
-		(direction == DirectionUp && game.SnakeDirection != DirectionDown) ||
-		(direction == DirectionDown && game.SnakeDirection != DirectionUp) {
-		game.SnakeDirection = direction
+func (game *Game) Init(config *Config, gridWidth, gridHeight int32) {
+	game.gridWidth, game.gridHeight = gridWidth, gridHeight
+
+	game.Config = config
+
+	game.NewGame()
+}
+
+func (game *Game) NewGame() {
+	game.Snake = []Position{
+		{X: 10, Y: 10},
+		{X: 9, Y: 10},
+		{X: 8, Y: 10},
+		{X: 7, Y: 10},
+		{X: 6, Y: 10},
 	}
+
+	game.snakeDirection = DirectionRight
+	game.nextDirection = DirectionRight
+
+	game.IsGameOver = false
+	game.IsPaused = false
+
+	game.Score = 0
+
+	game.spawnFood()
+}
+
+func (game *Game) RecordDirectionChange(direction int) {
+	game.nextDirection = direction
 }
 
 func (game *Game) MoveSnake() {
-	if game.IsGameOver {
+	if game.IsGameOver || game.IsPaused {
 		return
+	}
+
+	if (game.nextDirection == DirectionLeft && game.snakeDirection != DirectionRight) ||
+		(game.nextDirection == DirectionRight && game.snakeDirection != DirectionLeft) ||
+		(game.nextDirection == DirectionUp && game.snakeDirection != DirectionDown) ||
+		(game.nextDirection == DirectionDown && game.snakeDirection != DirectionUp) {
+		game.snakeDirection = game.nextDirection
 	}
 
 	previous := game.Snake
 	var newHead Position
 
-	switch game.SnakeDirection {
+	switch game.snakeDirection {
 	case DirectionUp:
 		newHead = Position{
 			X: previous[0].X,
@@ -68,18 +103,13 @@ func (game *Game) MoveSnake() {
 		}
 	}
 
-	if newHead.X >= game.gridWidth {
-		newHead.X = 0
+	if game.Config.WallsAreDeadly && (newHead.X < 0 || newHead.X >= game.gridWidth || newHead.Y < 0 || newHead.Y >= game.gridHeight) {
+		game.IsGameOver = true
+		return
 	}
-	if newHead.Y >= game.gridHeight {
-		newHead.Y = 0
-	}
-	if newHead.X < 0 {
-		newHead.X = game.gridWidth - 1
-	}
-	if newHead.Y < 0 {
-		newHead.Y = game.gridHeight - 1
-	}
+
+	newHead.X = (newHead.X + game.gridWidth) % game.gridWidth
+	newHead.Y = (newHead.Y + game.gridHeight) % game.gridHeight
 
 	for _, pos := range game.Snake {
 		if pos.X == newHead.X && pos.Y == newHead.Y {
@@ -94,9 +124,14 @@ func (game *Game) MoveSnake() {
 			previous...,
 		)
 
-		game.Score += 1
+		points := 1 * game.Config.Speed
+		if game.Config.WallsAreDeadly {
+			points *= 2
+		}
 
-		game.SpawnFood()
+		game.Score += points
+
+		game.spawnFood()
 	} else {
 		game.Snake = append(
 			[]Position{newHead},
@@ -105,7 +140,13 @@ func (game *Game) MoveSnake() {
 	}
 }
 
-func (game *Game) SpawnFood() {
+func (game *Game) TogglePause() {
+	if !game.IsGameOver {
+		game.IsPaused = !game.IsPaused
+	}
+}
+
+func (game *Game) spawnFood() {
 	snakePositions := make(map[Position]bool)
 	for _, pos := range game.Snake {
 		snakePositions[pos] = true
@@ -123,28 +164,4 @@ func (game *Game) SpawnFood() {
 	}
 
 	game.Food = food
-}
-
-func (game *Game) NewGame() {
-	game.Snake = []Position{
-		{X: 10, Y: 10},
-		{X: 9, Y: 10},
-		{X: 8, Y: 10},
-		{X: 7, Y: 10},
-		{X: 6, Y: 10},
-	}
-
-	game.SnakeDirection = DirectionRight
-
-	game.Score = 0
-
-	game.SpawnFood()
-
-	game.IsGameOver = false
-}
-
-func (game *Game) Init(gridWidth, gridHeight int32) {
-	game.gridWidth, game.gridHeight = gridWidth, gridHeight
-
-	game.NewGame()
 }
