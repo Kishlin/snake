@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 ![Golang](https://img.shields.io/badge/Golang-1.23.5-purple)
-[![Go Report Card](https://goreportcard.com/badge/github.com/Kishlin/snake)](https://goreportcard.com/report/github.com/Kishlin/snake)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Kishlin/snake/v2)](https://goreportcard.com/report/github.com/Kishlin/snake)
 [![GoDoc](https://godoc.org/github.com/Kishlin/snake?status.svg)](https://pkg.go.dev/github.com/Kishlin/snake)
 
 ![Raylib](https://img.shields.io/badge/Raylib-3.7.0-teal)
