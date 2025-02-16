@@ -5,9 +5,9 @@ import (
 	"time"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
-	"github.com/kishlin/snake/pkg/display"
-	"github.com/kishlin/snake/pkg/game"
-	"github.com/kishlin/snake/pkg/storage"
+	"github.com/kishlin/snake/v2/pkg/display"
+	"github.com/kishlin/snake/v2/pkg/game"
+	"github.com/kishlin/snake/v2/pkg/storage"
 )
 
 const gridWidth, gridHeight = 40, 21

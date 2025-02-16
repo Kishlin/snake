@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/kishlin/snake/pkg/loop"
+	"github.com/kishlin/snake/v2/pkg/loop"
 )
 
 func main() {

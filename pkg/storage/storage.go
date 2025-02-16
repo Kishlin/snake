@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/kishlin/snake/pkg/game"
+	"github.com/kishlin/snake/v2/pkg/game"
 )
 
 const Filename = "leaderboard.data"

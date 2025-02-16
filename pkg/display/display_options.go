@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
-	"github.com/kishlin/snake/pkg/game"
+	"github.com/kishlin/snake/v2/pkg/game"
 )
 
 func (display *Display) DrawConfig(config *game.Config, selection int) {
