@@ -1,6 +1,7 @@
 # Snake
 
 [![Open Source](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://opensource.org/)
+
 ![version](https://img.shields.io/badge/version-2.1.0-blue)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
@@ -8,11 +9,16 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/Kishlin/snake)](https://goreportcard.com/report/github.com/Kishlin/snake)
 [![GoDoc](https://godoc.org/github.com/Kishlin/snake?status.svg)](https://pkg.go.dev/github.com/Kishlin/snake)
 
+![Raylib](https://img.shields.io/badge/Raylib-3.7.0-teal)
+
 ## Download
 
 See [releases](https://github.com/Kishlin/snake/releases) to download the latest version.
 
 ## Changelog
+
+### 2.1.1 - 2025-02-16
+- Minor performance improvement.
 
 ### 2.1.0 - 2025-02-16
 - Leaderboard to keep track of scores locally.
