@@ -2,7 +2,7 @@
 
 [![Open Source](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://opensource.org/)
 
-![version](https://img.shields.io/badge/version-2.1.0-blue)
+![version](https://img.shields.io/badge/version-2.1.2-blue)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 ![Golang](https://img.shields.io/badge/Golang-1.23.5-purple)
@@ -16,6 +16,9 @@
 See [releases](https://github.com/Kishlin/snake/releases) to download the latest version.
 
 ## Changelog
+
+### 2.1.2 - 2025-02-16
+- Minor performance improvement.
 
 ### 2.1.1 - 2025-02-16
 - Minor performance improvement.

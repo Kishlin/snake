@@ -81,17 +81,12 @@ func (game *Game) MoveSnake() error {
 		return nil
 	}
 
-	if (game.nextDirection == DirectionLeft && game.snakeDirection != DirectionRight) ||
-		(game.nextDirection == DirectionRight && game.snakeDirection != DirectionLeft) ||
-		(game.nextDirection == DirectionUp && game.snakeDirection != DirectionDown) ||
-		(game.nextDirection == DirectionDown && game.snakeDirection != DirectionUp) {
-		game.snakeDirection = game.nextDirection
-	}
+	game.handleDirectionChange()
 
 	previous := game.Snake
 	newHead := game.computeNewHeadPosition()
 
-	if game.Config.WallsAreDeadly && (newHead.X < 0 || newHead.X >= game.gridWidth || newHead.Y < 0 || newHead.Y >= game.gridHeight) {
+	if game.Config.WallsAreDeadly && game.snakeHeadIsCrossingAWall(newHead) {
 		return game.GameOver()
 	}
 
@@ -141,6 +136,15 @@ func (game *Game) GameOver() error {
 	)
 }
 
+func (game *Game) handleDirectionChange() {
+	if (game.nextDirection == DirectionLeft && game.snakeDirection != DirectionRight) ||
+		(game.nextDirection == DirectionRight && game.snakeDirection != DirectionLeft) ||
+		(game.nextDirection == DirectionUp && game.snakeDirection != DirectionDown) ||
+		(game.nextDirection == DirectionDown && game.snakeDirection != DirectionUp) {
+		game.snakeDirection = game.nextDirection
+	}
+}
+
 func (game *Game) computeNewHeadPosition() Position {
 	var newHead Position
 	previous := game.Snake
@@ -169,6 +173,10 @@ func (game *Game) computeNewHeadPosition() Position {
 	}
 
 	return newHead
+}
+
+func (game *Game) snakeHeadIsCrossingAWall(newHead Position) bool {
+	return newHead.X < 0 || newHead.X >= game.gridWidth || newHead.Y < 0 || newHead.Y >= game.gridHeight
 }
 
 func (game *Game) snakeIsCollidingWithItself(newHead Position) bool {
