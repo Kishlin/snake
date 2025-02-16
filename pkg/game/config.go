@@ -8,8 +8,8 @@ type Config struct {
 }
 
 func (config *Config) Init() {
-	config.Speed = 4
-	config.WallsAreDeadly = false
+	config.Speed = 7
+	config.WallsAreDeadly = true
 }
 
 func (config *Config) IncreaseSpeed() {
