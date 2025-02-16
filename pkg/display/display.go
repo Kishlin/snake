@@ -38,7 +38,7 @@ func (display *Display) writeTitle() {
 		"SNAKE",
 		textOptions{
 			center: true,
-			y:      padding*2 + fontSize,
+			y:      padding * 2,
 			color:  []rl.Color{rl.White},
 		},
 	)

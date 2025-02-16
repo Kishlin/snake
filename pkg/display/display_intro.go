@@ -27,7 +27,7 @@ func (display *Display) writeInstructions() {
 	}
 
 	xPos := int32(rl.GetScreenWidth())/2 - rl.MeasureText(instructions[3], fontSize)/2
-	yOffset := int32(rl.GetScreenHeight())/2 - fontSize*2 - fontSize/2
+	yOffset := int32(rl.GetScreenHeight())/2 - fontSize*3
 
 	for i, instruction := range instructions {
 		rl.DrawText(instruction, xPos, yOffset+int32(i)*fontSize, fontSize, rl.White)
