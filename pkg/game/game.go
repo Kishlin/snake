@@ -22,6 +22,8 @@ type Game struct {
 	snakeDirection int
 	nextDirection  int
 
+	pointsPerFood int
+
 	IsGameOver bool
 	IsPaused   bool
 
@@ -57,6 +59,11 @@ func (game *Game) NewGame() {
 	game.snakeDirection = DirectionRight
 	game.nextDirection = DirectionRight
 
+	game.pointsPerFood = 1 * game.Config.Speed
+	if game.Config.WallsAreDeadly {
+		game.pointsPerFood *= 2
+	}
+
 	game.IsGameOver = false
 	game.IsPaused = false
 
@@ -82,30 +89,7 @@ func (game *Game) MoveSnake() error {
 	}
 
 	previous := game.Snake
-	var newHead Position
-
-	switch game.snakeDirection {
-	case DirectionUp:
-		newHead = Position{
-			X: previous[0].X,
-			Y: previous[0].Y - 1,
-		}
-	case DirectionRight:
-		newHead = Position{
-			X: previous[0].X + 1,
-			Y: previous[0].Y,
-		}
-	case DirectionDown:
-		newHead = Position{
-			X: previous[0].X,
-			Y: previous[0].Y + 1,
-		}
-	case DirectionLeft:
-		newHead = Position{
-			X: previous[0].X - 1,
-			Y: previous[0].Y,
-		}
-	}
+	newHead := game.computeNewHeadPosition()
 
 	if game.Config.WallsAreDeadly && (newHead.X < 0 || newHead.X >= game.gridWidth || newHead.Y < 0 || newHead.Y >= game.gridHeight) {
 		return game.GameOver()
@@ -114,10 +98,8 @@ func (game *Game) MoveSnake() error {
 	newHead.X = (newHead.X + game.gridWidth) % game.gridWidth
 	newHead.Y = (newHead.Y + game.gridHeight) % game.gridHeight
 
-	for _, pos := range game.Snake {
-		if pos.X == newHead.X && pos.Y == newHead.Y {
-			return game.GameOver()
-		}
+	if game.snakeIsCollidingWithItself(newHead) {
+		return game.GameOver()
 	}
 
 	if newHead == game.Food {
@@ -126,12 +108,7 @@ func (game *Game) MoveSnake() error {
 			previous...,
 		)
 
-		points := 1 * game.Config.Speed
-		if game.Config.WallsAreDeadly {
-			points *= 2
-		}
-
-		game.Score += points
+		game.Score += game.pointsPerFood
 
 		game.spawnFood()
 	} else {
@@ -162,6 +139,45 @@ func (game *Game) GameOver() error {
 			Version:        EntryVersion,
 		},
 	)
+}
+
+func (game *Game) computeNewHeadPosition() Position {
+	var newHead Position
+	previous := game.Snake
+
+	switch game.snakeDirection {
+	case DirectionUp:
+		newHead = Position{
+			X: previous[0].X,
+			Y: previous[0].Y - 1,
+		}
+	case DirectionRight:
+		newHead = Position{
+			X: previous[0].X + 1,
+			Y: previous[0].Y,
+		}
+	case DirectionDown:
+		newHead = Position{
+			X: previous[0].X,
+			Y: previous[0].Y + 1,
+		}
+	case DirectionLeft:
+		newHead = Position{
+			X: previous[0].X - 1,
+			Y: previous[0].Y,
+		}
+	}
+
+	return newHead
+}
+
+func (game *Game) snakeIsCollidingWithItself(newHead Position) bool {
+	for _, pos := range game.Snake {
+		if pos.X == newHead.X && pos.Y == newHead.Y {
+			return true
+		}
+	}
+	return false
 }
 
 func (game *Game) spawnFood() {
