@@ -20,10 +20,11 @@ func (display *Display) DrawIntro(selection int) {
 func (display *Display) writeInstructions() {
 	instructions := []string{
 		"Use the arrow keys to move",
+		"",
 		"Press [Space] to pause",
-		"Press [Enter] to restart",
+		"Press [Enter] to confirm/restart",
 		"Press [Backspace] to go back",
-		"Press [Escape] to go exit",
+		"Press [Escape] to quit",
 	}
 
 	xPos := int32(rl.GetScreenWidth())/2 - rl.MeasureText(instructions[3], fontSize)/2
