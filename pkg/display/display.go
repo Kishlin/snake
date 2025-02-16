@@ -22,7 +22,7 @@ func (display *Display) Init(gridWidth, gridHeight int32) {
 
 	rl.InitWindow(gridWidth*20+2*padding, gridHeight*20+3*padding+fontSize, "Snake")
 
-	rl.SetTargetFPS(int32(rl.GetMonitorRefreshRate(rl.GetCurrentMonitor())))
+	rl.SetTargetFPS(60)
 }
 
 func (display *Display) ShouldClose() bool {

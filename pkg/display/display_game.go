@@ -20,8 +20,6 @@ func (display *Display) DrawGame(snakeGame *game.Game) {
 
 	display.writeScoreText(snakeGame)
 
-	display.writeFPS()
-
 	if snakeGame.IsGameOver {
 		display.writeGameStatusText("GAME OVER", rl.Red)
 	} else if snakeGame.IsPaused {
@@ -77,18 +75,6 @@ func (display *Display) writeScoreText(snakeGame *game.Game) {
 	rl.DrawText(
 		scoreString,
 		padding,
-		padding*2+20*display.gridHeight+2,
-		fontSize,
-		rl.White,
-	)
-}
-
-func (display *Display) writeFPS() {
-	fps := rl.GetFPS()
-	fpsString := fmt.Sprintf("FPS: %d", fps)
-	rl.DrawText(
-		fpsString,
-		int32(rl.GetScreenWidth())-rl.MeasureText(fpsString, fontSize)-padding,
 		padding*2+20*display.gridHeight+2,
 		fontSize,
 		rl.White,
