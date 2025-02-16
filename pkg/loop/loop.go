@@ -156,10 +156,10 @@ func (loop *Loop) GameScreen(ui *display.Display, snakeConfig *game.Config, lead
 
 	for {
 		if ui.ShouldClose() {
-			loop.saveLeaderboardScoreBeforeExit(snakeGame)
+			loop.saveLeaderboardScoreBeforeExit(&snakeGame, leaderboard)
 			return StepExit
 		} else if rl.IsKeyPressed(rl.KeyBackspace) {
-			loop.saveLeaderboardScoreBeforeExit(snakeGame)
+			loop.saveLeaderboardScoreBeforeExit(&snakeGame, leaderboard)
 			return StepConfig
 		} else if rl.IsKeyPressed(rl.KeyUp) {
 			snakeGame.RecordDirectionChange(game.DirectionUp)
@@ -171,6 +171,7 @@ func (loop *Loop) GameScreen(ui *display.Display, snakeConfig *game.Config, lead
 			snakeGame.RecordDirectionChange(game.DirectionRight)
 		} else if rl.IsKeyPressed(rl.KeyEnter) || rl.IsKeyPressed(rl.KeyKpEnter) {
 			if snakeGame.IsGameOver {
+				loop.saveLeaderboardScoreBeforeExit(&snakeGame, leaderboard)
 				snakeGame.NewGame()
 			}
 		} else if rl.IsKeyPressed(rl.KeySpace) {
@@ -179,10 +180,7 @@ func (loop *Loop) GameScreen(ui *display.Display, snakeConfig *game.Config, lead
 
 		framesCount++
 		if framesCount > (10 - snakeConfig.Speed) {
-			err := snakeGame.MoveSnake()
-			if err != nil {
-				rl.TraceLog(rl.LogError, "Error moving snake: %v", err)
-			}
+			snakeGame.MoveSnake()
 			framesCount = 0
 		}
 
@@ -190,9 +188,18 @@ func (loop *Loop) GameScreen(ui *display.Display, snakeConfig *game.Config, lead
 	}
 }
 
-func (loop *Loop) saveLeaderboardScoreBeforeExit(snakeGame game.Game) {
-	err := snakeGame.GameOver()
+func (loop *Loop) saveLeaderboardScoreBeforeExit(snakeGame *game.Game, leaderboard *game.Leaderboard) {
+	err := leaderboard.Add(
+		game.LeaderboardEntry{
+			Score:          snakeGame.Score,
+			SpeedConfig:    snakeGame.Config.Speed,
+			WallsAreDeadly: snakeGame.Config.WallsAreDeadly,
+			Timestamp:      time.Now().Unix(),
+			Version:        game.EntryVersion,
+		},
+	)
+
 	if err != nil {
-		rl.TraceLog(rl.LogError, "Error ending game: %v", err)
+		rl.TraceLog(rl.LogError, "Error saving score: %v", err)
 	}
 }

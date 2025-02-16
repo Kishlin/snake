@@ -2,7 +2,6 @@ package game
 
 import (
 	"math/rand/v2"
-	"time"
 )
 
 const (
@@ -76,9 +75,9 @@ func (game *Game) RecordDirectionChange(direction int) {
 	game.nextDirection = direction
 }
 
-func (game *Game) MoveSnake() error {
+func (game *Game) MoveSnake() {
 	if game.IsGameOver || game.IsPaused {
-		return nil
+		return
 	}
 
 	game.handleDirectionChange()
@@ -87,14 +86,16 @@ func (game *Game) MoveSnake() error {
 	newHead := game.computeNewHeadPosition()
 
 	if game.Config.WallsAreDeadly && game.snakeHeadIsCrossingAWall(newHead) {
-		return game.GameOver()
+		game.IsGameOver = true
+		return
 	}
 
 	newHead.X = (newHead.X + game.gridWidth) % game.gridWidth
 	newHead.Y = (newHead.Y + game.gridHeight) % game.gridHeight
 
 	if game.snakeIsCollidingWithItself(newHead) {
-		return game.GameOver()
+		game.IsGameOver = true
+		return
 	}
 
 	if newHead == game.Food {
@@ -112,28 +113,12 @@ func (game *Game) MoveSnake() error {
 			previous[:len(previous)-1]...,
 		)
 	}
-
-	return nil
 }
 
 func (game *Game) TogglePause() {
 	if !game.IsGameOver {
 		game.IsPaused = !game.IsPaused
 	}
-}
-
-func (game *Game) GameOver() error {
-	game.IsGameOver = true
-
-	return game.Leaderboard.Add(
-		LeaderboardEntry{
-			Score:          game.Score,
-			SpeedConfig:    game.Config.Speed,
-			WallsAreDeadly: game.Config.WallsAreDeadly,
-			Timestamp:      time.Now().Unix(),
-			Version:        EntryVersion,
-		},
-	)
 }
 
 func (game *Game) handleDirectionChange() {
