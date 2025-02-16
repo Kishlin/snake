@@ -7,6 +7,7 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/kishlin/snake/pkg/display"
 	"github.com/kishlin/snake/pkg/game"
+	"github.com/kishlin/snake/pkg/storage"
 )
 
 const gridWidth, gridHeight = 40, 21
@@ -14,6 +15,7 @@ const gridWidth, gridHeight = 40, 21
 const (
 	StepExit = iota
 	StepTitleScreen
+	StepLeaderboard
 	StepConfig
 	StepGame
 )
@@ -33,8 +35,21 @@ func (loop *Loop) Run() {
 	ui := display.Display{}
 	ui.Init(gridWidth, gridHeight)
 
+	var store game.Storage
+	store = &storage.Storage{}
+	err := store.Init()
+
+	if err != nil {
+		rl.TraceLog(rl.LogError, "Error initializing storage: %v", err)
+		ui.Close()
+		return
+	}
+
 	snakeConfig := game.Config{}
 	snakeConfig.Init()
+
+	leaderboard := game.Leaderboard{}
+	leaderboard.Init(&store)
 
 	for !ui.ShouldClose() && loop.step != StepExit {
 		rl.PollInputEvents()
@@ -43,10 +58,12 @@ func (loop *Loop) Run() {
 		switch loop.step {
 		case StepTitleScreen:
 			nextStep = loop.TitleScreen(&ui)
+		case StepLeaderboard:
+			nextStep = loop.LeaderboardScreen(&ui, &leaderboard)
 		case StepConfig:
 			nextStep = loop.ConfigScreen(&ui, &snakeConfig)
 		case StepGame:
-			nextStep = loop.GameScreen(&ui, &snakeConfig)
+			nextStep = loop.GameScreen(&ui, &snakeConfig, &leaderboard)
 		default:
 			break
 		}
@@ -58,16 +75,44 @@ func (loop *Loop) Run() {
 }
 
 func (loop *Loop) TitleScreen(ui *display.Display) int {
+	selected := 0
+
 	for {
 		if ui.ShouldClose() {
 			return StepExit
 		} else if rl.IsKeyPressed(rl.KeyBackspace) {
 			return StepExit
+		} else if rl.IsKeyPressed(rl.KeyUp) {
+			selected = (selected + 2 - 1) % 2
+		} else if rl.IsKeyPressed(rl.KeyDown) {
+			selected = (selected + 1) % 2
 		} else if rl.IsKeyPressed(rl.KeyEnter) || rl.IsKeyPressed(rl.KeyKpEnter) {
-			return StepConfig
+			if selected == 0 {
+				return StepConfig
+			} else {
+				return StepLeaderboard
+			}
 		}
 
-		ui.DrawIntro()
+		ui.DrawIntro(selected)
+	}
+}
+
+func (loop *Loop) LeaderboardScreen(ui *display.Display, leaderboard *game.Leaderboard) int {
+	top, err := leaderboard.GetTop()
+	if err != nil {
+		rl.TraceLog(rl.LogError, "Error getting top scores: %v", err)
+		return StepTitleScreen
+	}
+
+	for {
+		if ui.ShouldClose() {
+			return StepExit
+		} else if rl.IsKeyPressed(rl.KeyBackspace) || rl.IsKeyPressed(rl.KeyEnter) || rl.IsKeyPressed(rl.KeyKpEnter) {
+			return StepTitleScreen
+		}
+
+		ui.DrawLeaderboard(top)
 	}
 }
 
@@ -103,9 +148,9 @@ func (loop *Loop) ConfigScreen(ui *display.Display, snakeConfig *game.Config) in
 	}
 }
 
-func (loop *Loop) GameScreen(ui *display.Display, snakeConfig *game.Config) int {
+func (loop *Loop) GameScreen(ui *display.Display, snakeConfig *game.Config, leaderboard *game.Leaderboard) int {
 	snakeGame := game.Game{}
-	snakeGame.Init(snakeConfig, gridWidth, gridHeight)
+	snakeGame.Init(snakeConfig, leaderboard, gridWidth, gridHeight)
 
 	framesCount := 0
 
@@ -132,7 +177,10 @@ func (loop *Loop) GameScreen(ui *display.Display, snakeConfig *game.Config) int 
 
 		framesCount++
 		if framesCount > (10 - snakeConfig.Speed) {
-			snakeGame.MoveSnake()
+			err := snakeGame.MoveSnake()
+			if err != nil {
+				rl.TraceLog(rl.LogError, "Error moving snake: %v", err)
+			}
 			framesCount = 0
 		}
 

@@ -2,6 +2,7 @@ package game
 
 import (
 	"math/rand/v2"
+	"time"
 )
 
 const (
@@ -28,14 +29,17 @@ type Game struct {
 
 	Food Position
 
+	Score int
+
 	Config *Config
 
-	Score int
+	Leaderboard *Leaderboard
 }
 
-func (game *Game) Init(config *Config, gridWidth, gridHeight int32) {
+func (game *Game) Init(config *Config, leaderboard *Leaderboard, gridWidth, gridHeight int32) {
 	game.gridWidth, game.gridHeight = gridWidth, gridHeight
 
+	game.Leaderboard = leaderboard
 	game.Config = config
 
 	game.NewGame()
@@ -65,9 +69,9 @@ func (game *Game) RecordDirectionChange(direction int) {
 	game.nextDirection = direction
 }
 
-func (game *Game) MoveSnake() {
+func (game *Game) MoveSnake() error {
 	if game.IsGameOver || game.IsPaused {
-		return
+		return nil
 	}
 
 	if (game.nextDirection == DirectionLeft && game.snakeDirection != DirectionRight) ||
@@ -104,8 +108,7 @@ func (game *Game) MoveSnake() {
 	}
 
 	if game.Config.WallsAreDeadly && (newHead.X < 0 || newHead.X >= game.gridWidth || newHead.Y < 0 || newHead.Y >= game.gridHeight) {
-		game.IsGameOver = true
-		return
+		return game.gameOver()
 	}
 
 	newHead.X = (newHead.X + game.gridWidth) % game.gridWidth
@@ -113,8 +116,7 @@ func (game *Game) MoveSnake() {
 
 	for _, pos := range game.Snake {
 		if pos.X == newHead.X && pos.Y == newHead.Y {
-			game.IsGameOver = true
-			return
+			return game.gameOver()
 		}
 	}
 
@@ -138,12 +140,27 @@ func (game *Game) MoveSnake() {
 			previous[:len(previous)-1]...,
 		)
 	}
+
+	return nil
 }
 
 func (game *Game) TogglePause() {
 	if !game.IsGameOver {
 		game.IsPaused = !game.IsPaused
 	}
+}
+
+func (game *Game) gameOver() error {
+	game.IsGameOver = true
+
+	return game.Leaderboard.Add(
+		LeaderboardEntry{
+			Score:          game.Score,
+			SpeedConfig:    game.Config.Speed,
+			WallsAreDeadly: game.Config.WallsAreDeadly,
+			Timestamp:      time.Now().Unix(),
+		},
+	)
 }
 
 func (game *Game) spawnFood() {

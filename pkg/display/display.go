@@ -14,7 +14,7 @@ type Display struct {
 const (
 	padding = 25
 
-	fontSize = 30
+	fontSize int32 = 30
 )
 
 func (display *Display) Init(gridWidth, gridHeight int32) {
@@ -59,6 +59,23 @@ func (options *textOptions) validate() {
 	if options.center == false && options.x == 0 {
 		panic("center or x option must be used")
 	}
+}
+
+func (display *Display) writeSelectable(text string, index int, selection int, y int32) {
+	color := rl.White
+	if index == selection {
+		color = rl.Orange
+		text = "< " + text + " >"
+	}
+
+	display.drawText(
+		text,
+		textOptions{
+			center: true,
+			y:      y,
+			color:  []rl.Color{color},
+		},
+	)
 }
 
 func (display *Display) drawText(text string, options textOptions) {

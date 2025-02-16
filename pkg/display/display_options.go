@@ -23,7 +23,7 @@ func (display *Display) DrawConfig(config *game.Config, selection int) {
 func (display *Display) writeSpeedOption(config *game.Config, selection int) {
 	speedText := fmt.Sprintf("Speed: %d/%d", config.Speed, game.MaxSpeed)
 
-	display.writeOption(speedText, 0, selection, int32(rl.GetScreenHeight())/2-fontSize)
+	display.writeSelectable(speedText, 0, selection, int32(rl.GetScreenHeight())/2-fontSize)
 }
 
 func (display *Display) writeWallsAreDeadlyOption(config *game.Config, selection int) {
@@ -34,26 +34,9 @@ func (display *Display) writeWallsAreDeadlyOption(config *game.Config, selection
 		wallsAreDeadlyText += "OFF"
 	}
 
-	display.writeOption(wallsAreDeadlyText, 1, selection, int32(rl.GetScreenHeight())/2+fontSize)
+	display.writeSelectable(wallsAreDeadlyText, 1, selection, int32(rl.GetScreenHeight())/2+fontSize)
 }
 
 func (display *Display) writeStartText(selection int) {
-	display.writeOption("Press [Enter] to start", 2, selection, int32(rl.GetScreenHeight())-padding*2-fontSize*2)
-}
-
-func (display *Display) writeOption(text string, index int, selection int, y int32) {
-	color := rl.White
-	if index == selection {
-		color = rl.Orange
-		text = "< " + text + " >"
-	}
-
-	display.drawText(
-		text,
-		textOptions{
-			center: true,
-			y:      y,
-			color:  []rl.Color{color},
-		},
-	)
+	display.writeSelectable("Press [Enter] to start", 2, selection, int32(rl.GetScreenHeight())-padding*2-fontSize*2)
 }

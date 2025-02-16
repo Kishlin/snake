@@ -4,14 +4,15 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-func (display *Display) DrawIntro() {
+func (display *Display) DrawIntro(selection int) {
 	rl.BeginDrawing()
 
 	rl.ClearBackground(rl.Black)
 
 	display.writeTitle()
 	display.writeInstructions()
-	display.writeContinueText()
+	display.writeContinueText(selection)
+	display.writeLeaderboardText(selection)
 
 	rl.EndDrawing()
 }
@@ -33,13 +34,20 @@ func (display *Display) writeInstructions() {
 	}
 }
 
-func (display *Display) writeContinueText() {
-	display.drawText(
-		"< Press [Enter] to continue >",
-		textOptions{
-			center: true,
-			y:      int32(rl.GetScreenHeight()) - padding*2 - fontSize*2,
-			color:  []rl.Color{rl.Orange, rl.White},
-		},
+func (display *Display) writeContinueText(selection int) {
+	display.writeSelectable(
+		"Continue",
+		0,
+		selection,
+		int32(rl.GetScreenHeight())-padding*2-fontSize*2,
+	)
+}
+
+func (display *Display) writeLeaderboardText(selection int) {
+	display.writeSelectable(
+		"Leaderboard",
+		1,
+		selection,
+		int32(rl.GetScreenHeight())-padding-fontSize,
 	)
 }
