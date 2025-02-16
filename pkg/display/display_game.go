@@ -61,11 +61,10 @@ func (display *Display) drawSnake(snakeGame *game.Game) {
 }
 
 func (display *Display) drawFood(snakeGame *game.Game) {
-	rl.DrawRectangle(
-		snakeGame.Food.X*20+padding,
-		snakeGame.Food.Y*20+padding,
-		20,
-		20,
+	rl.DrawCircle(
+		snakeGame.Food.X*20+padding+10,
+		snakeGame.Food.Y*20+padding+10,
+		10,
 		rl.Red,
 	)
 }
