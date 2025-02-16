@@ -156,8 +156,10 @@ func (loop *Loop) GameScreen(ui *display.Display, snakeConfig *game.Config, lead
 
 	for {
 		if ui.ShouldClose() {
+			loop.saveLeaderboardScoreBeforeExit(snakeGame)
 			return StepExit
 		} else if rl.IsKeyPressed(rl.KeyBackspace) {
+			loop.saveLeaderboardScoreBeforeExit(snakeGame)
 			return StepConfig
 		} else if rl.IsKeyPressed(rl.KeyUp) {
 			snakeGame.RecordDirectionChange(game.DirectionUp)
@@ -185,5 +187,12 @@ func (loop *Loop) GameScreen(ui *display.Display, snakeConfig *game.Config, lead
 		}
 
 		ui.DrawGame(&snakeGame)
+	}
+}
+
+func (loop *Loop) saveLeaderboardScoreBeforeExit(snakeGame game.Game) {
+	err := snakeGame.GameOver()
+	if err != nil {
+		rl.TraceLog(rl.LogError, "Error ending game: %v", err)
 	}
 }

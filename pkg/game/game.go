@@ -108,7 +108,7 @@ func (game *Game) MoveSnake() error {
 	}
 
 	if game.Config.WallsAreDeadly && (newHead.X < 0 || newHead.X >= game.gridWidth || newHead.Y < 0 || newHead.Y >= game.gridHeight) {
-		return game.gameOver()
+		return game.GameOver()
 	}
 
 	newHead.X = (newHead.X + game.gridWidth) % game.gridWidth
@@ -116,7 +116,7 @@ func (game *Game) MoveSnake() error {
 
 	for _, pos := range game.Snake {
 		if pos.X == newHead.X && pos.Y == newHead.Y {
-			return game.gameOver()
+			return game.GameOver()
 		}
 	}
 
@@ -150,7 +150,7 @@ func (game *Game) TogglePause() {
 	}
 }
 
-func (game *Game) gameOver() error {
+func (game *Game) GameOver() error {
 	game.IsGameOver = true
 
 	return game.Leaderboard.Add(
