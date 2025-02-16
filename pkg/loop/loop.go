@@ -9,7 +9,6 @@ import (
 	"github.com/kishlin/snake/pkg/game"
 )
 
-const gameSpeed = 3
 const gridWidth, gridHeight = 40, 21
 
 const (
