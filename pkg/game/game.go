@@ -159,6 +159,7 @@ func (game *Game) GameOver() error {
 			SpeedConfig:    game.Config.Speed,
 			WallsAreDeadly: game.Config.WallsAreDeadly,
 			Timestamp:      time.Now().Unix(),
+			Version:        EntryVersion,
 		},
 	)
 }

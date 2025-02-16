@@ -10,11 +10,14 @@ type Storage interface {
 	ReadTop() ([]LeaderboardEntry, error)
 }
 
+const EntryVersion = 1
+
 type LeaderboardEntry struct {
 	Score          int
 	SpeedConfig    int
 	WallsAreDeadly bool
 	Timestamp      int64
+	Version        int
 }
 
 type Leaderboard struct {
