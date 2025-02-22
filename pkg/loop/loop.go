@@ -178,6 +178,10 @@ func (loop *Loop) GameScreen(ui *display.Display, snakeConfig *game.Config, lead
 			snakeGame.TogglePause()
 		}
 
+		if !rl.IsWindowFocused() && !snakeGame.IsPaused {
+			snakeGame.TogglePause()
+		}
+
 		framesCount++
 		if framesCount > (10 - snakeConfig.Speed) {
 			snakeGame.MoveSnake()

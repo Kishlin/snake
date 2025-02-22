@@ -2,11 +2,11 @@
 
 [![Open Source](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://opensource.org/)
 
-![version](https://img.shields.io/badge/version-2.1.3-blue)
+![version](https://img.shields.io/badge/version-2.2.0-blue)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 ![Golang](https://img.shields.io/badge/Golang-1.23.5-purple)
-[![Go Report Card](https://goreportcard.com/badge/github.com/Kishlin/snake/v2)](https://goreportcard.com/report/github.com/Kishlin/snake)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Kishlin/snake/v2)](https://goreportcard.com/report/github.com/Kishlin/snake/v2)
 [![GoDoc](https://godoc.org/github.com/Kishlin/snake?status.svg)](https://pkg.go.dev/github.com/Kishlin/snake)
 
 ![Raylib](https://img.shields.io/badge/Raylib-3.7.0-teal)
@@ -17,8 +17,12 @@ See [releases](https://github.com/Kishlin/snake/releases) to download the latest
 
 ## Changelog
 
+### 2.2.0 - 2025-02-22
+
+- Game is now paused automatically when the window loses focus.
+
 ### 2.1.3 - 2025-02-16
-- Fixed a bug where the score would be saved twice under certain conditions
+- Fixed a bug where the score would be saved twice under certain conditions.
 
 ### 2.1.2 - 2025-02-16
 - Minor performance improvement.
